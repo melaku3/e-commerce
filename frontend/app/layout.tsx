@@ -1,5 +1,7 @@
+import { ClerkProvider } from '@clerk/nextjs'
+import { AppProvider } from '@/context/AppContext'
+import Navbar from '@/components/Navbar'
 import type { Metadata } from 'next'
-import { ClerkProvider, SignInButton, SignUpButton, SignedIn, SignedOut, UserButton, } from '@clerk/nextjs'
 import './globals.css'
 
 
@@ -13,18 +15,14 @@ export default function RootLayout({ children, }: Readonly<{ children: React.Rea
     <ClerkProvider>
       <html lang="en">
         <body>
-          <header className="absolute flex right-0 items-center p-4 gap-4 h-16 ">
-            <SignedOut>
-              <SignInButton />
-              <SignUpButton />
-            </SignedOut>
-            <SignedIn>
-              <UserButton />
-            </SignedIn>
-          </header>
-          <section className='p-4 sm:px-6 lg:px-8'>
-            {children}
-          </section>
+          <AppProvider>
+            <header className='border-b border-gray-400 p-4 sm:px-6 lg:px-8'>
+              <Navbar />
+            </header>
+            <main className='p-4 sm:px-6 lg:px-8'>
+              {children}
+            </main>
+          </AppProvider>
         </body>
       </html>
     </ClerkProvider>
