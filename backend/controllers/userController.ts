@@ -27,3 +27,15 @@ export const registerUser = expressAsyncHandler(async (req, res) => {
     res.status(201).json({ message: 'User registered successfully.' });
 });
 
+// @docs: Check if a user exists
+// @route GET /api/v1/auth/check-user/:clerkUserId
+// @access Public
+export const checkUser = expressAsyncHandler(async (req, res) => {
+    const { clerkUserId } = req.params;
+    const userExists = await userModel.exists({ clerkUserId });
+    if (!userExists) {
+        res.status(404).json({ exists: false });
+        return;
+    }
+    res.status(200).json({ exists: true });
+});

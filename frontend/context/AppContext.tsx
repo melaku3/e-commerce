@@ -5,6 +5,7 @@ import { createContext, useContext, useState, ReactNode } from "react";
 interface AppContextType {
     theme: string;
     user: ReturnType<typeof useUser>['user'];
+    isSignedIn: ReturnType<typeof useUser>['isSignedIn'];
     setTheme: (theme: string) => void;
 }
 
@@ -12,8 +13,8 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
     const [theme, setTheme] = useState('light');
-    const { user } = useUser();
-    const value = { theme, setTheme, user };
+    const { user, isSignedIn } = useUser();
+    const value = { theme, setTheme, user, isSignedIn };
     return (
         <AppContext.Provider value={value}>
             {children}

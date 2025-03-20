@@ -1,35 +1,55 @@
 "use client";
 import { useAppContext } from '@/context/AppContext';
-import { useClerk, UserButton } from '@clerk/nextjs';
+import { useClerk, UserButton, useUser } from '@clerk/nextjs';
 import axios from "@/config/axios";
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation';
 import { FaGift, FaHome, FaShoppingBag, FaShoppingCart, FaRegUser } from "react-icons/fa";
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function Navbar() {
     const pathname = usePathname();
-    const { user } = useAppContext();
+    const { user, isSignedIn } = useAppContext();
     const { openSignIn } = useClerk();
     const router = useRouter();
+    const [isRegistered, setIsRegistered] = useState(false);
 
-
-    // register a user
-    const registerUser = async () => {
+    // Check if user exists
+    const checkUserExists = async (clerkUserId: string) => {
         try {
-            await axios.post('/auth/register', { clerkUserId: user?.id, email: user?.emailAddresses[0].emailAddress })
-                .then(res => console.log(res.data.message));
+            const res = await axios.get(`/auth/check-user/${clerkUserId}`);
+            return res.data.exists;
         } catch (error) {
-            console.log((error as any)?.response?.data?.message);
+            console.error("Error checking user:", (error as any)?.response.data.exists);
+            return false;
         }
-    }
+    };
 
+    // Register user
+    const registerUser = async () => {
+        if (!user) return;
+        const alreadyRegistered = await checkUserExists(user.id);
+        setIsRegistered(alreadyRegistered);
+        if (alreadyRegistered) return;
+
+        try {
+            await axios.post('/auth/register', {
+                clerkUserId: user.id,
+                email: user.emailAddresses[0].emailAddress
+            });
+            setIsRegistered(true);
+        } catch (error) {
+            console.error("Registration failed:", (error as any)?.response.data.message);
+        }
+    };
+
+    // Register user on sign in
     useEffect(() => {
-        if (user && user?.id) {
+        if (isSignedIn && !isRegistered) {
             registerUser();
         }
-    }, [user]);
+    }, [isSignedIn, isRegistered]);
 
     return (
         <nav className='flex items-center justify-between text-gray-500'>
@@ -55,7 +75,7 @@ export default function Navbar() {
             </ul>
 
             {/* User profile */}
-            {user ? (
+            {isSignedIn ? (
                 <UserButton>
                     <UserButton.MenuItems>
                         <UserButton.Action label='Home' labelIcon={<FaHome />} onClick={() => router.push('/')} />
@@ -81,8 +101,6 @@ export default function Navbar() {
                     Account
                 </button>
             )}
-
         </nav>
-    )
+    );
 }
-
