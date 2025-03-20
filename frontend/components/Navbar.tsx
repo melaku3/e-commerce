@@ -1,6 +1,6 @@
 "use client";
 import { useAppContext } from '@/context/AppContext';
-import { useClerk, UserButton, useUser } from '@clerk/nextjs';
+import { useClerk, UserButton } from '@clerk/nextjs';
 import axios from "@/config/axios";
 import Image from 'next/image'
 import Link from 'next/link'
@@ -21,7 +21,7 @@ export default function Navbar() {
             const res = await axios.get(`/auth/check-user/${clerkUserId}`);
             return res.data.exists;
         } catch (error) {
-            console.error("Error checking user:", (error as any)?.response.data.exists);
+            console.error("Error checking user:", (error as unknown as { response: { data: { exists: boolean } } })?.response.data.exists);
             return false;
         }
     };
@@ -40,7 +40,7 @@ export default function Navbar() {
             });
             setIsRegistered(true);
         } catch (error) {
-            console.error("Registration failed:", (error as any)?.response.data.message);
+            console.error("Registration failed:", (error as unknown as { response: { data: { message: string } } })?.response.data.message);
         }
     };
 
