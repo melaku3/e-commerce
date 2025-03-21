@@ -61,16 +61,16 @@ export default function Navbar() {
             {/* Navigation Links */}
             <ul className='hidden md:flex items-center gap-5'>
                 <li>
-                    <Link href={'/'} className={`${pathname === '/' ? 'text-gray-950' : ''} hover:text-gray-950`}>Home</Link>
+                    <Link href={'/'} className={`${pathname === '/' ? 'text-gray-950' : ''} hover:text-gray-950 ease-in-out duration-300`}>Home</Link>
                 </li>
                 <li>
-                    <Link href={'/all-products'} className={`${pathname === '/all-products' ? 'text-gray-950' : ''} hover:text-gray-950`}>Shop</Link>
+                    <Link href={'/all-products'} className={`${pathname === '/all-products' ? 'text-gray-950' : ''} hover:text-gray-950 ease-in-out duration-300`}>Shop</Link>
                 </li>
                 <li>
-                    <Link href={'/about'} className={`${pathname === '/about' ? 'text-gray-950' : ''} hover:text-gray-950`}>About us</Link>
+                    <Link href={'/about'} className={`${pathname === '/about' ? 'text-gray-950' : ''} hover:text-gray-950 ease-in-out duration-300`}>About us</Link>
                 </li>
                 <li>
-                    <Link href={'/contact'} className={`${pathname === '/contact' ? 'text-gray-950' : ''} hover:text-gray-950`}>Contact</Link>
+                    <Link href={'/contact'} className={`${pathname === '/contact' ? 'text-gray-950' : ''} hover:text-gray-950 ease-in-out duration-300`}>Contact</Link>
                 </li>
             </ul>
 
@@ -95,7 +95,7 @@ export default function Navbar() {
                 </UserButton>
             ) : (
                 <button
-                    className='flex items-center gap-2 cursor-pointer hover:text-gray-950'
+                    className='flex items-center gap-2 cursor-pointer hover:text-gray-950 ease-in-out duration-300'
                     onClick={() => openSignIn()} >
                     <FaRegUser />
                     Account
