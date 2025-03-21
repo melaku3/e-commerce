@@ -16,10 +16,10 @@ export default function RootLayout({ children, }: Readonly<{ children: React.Rea
       <html lang="en">
         <body>
           <AppProvider>
-            <header className='border-b border-gray-400 p-4 sm:px-6 lg:px-8'>
+            <header className='sticky top-0 border-b border-gray-400 p-4 sm:px-6 lg:px-8'>
               <Navbar />
             </header>
-            <main className='p-4 sm:px-6 lg:px-8'>
+            <main className='relative w-full -z-50  mx-auto sm:px-6 lg:px-20 py-8'>
               {children}
             </main>
           </AppProvider>

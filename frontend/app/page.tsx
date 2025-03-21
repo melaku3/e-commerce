@@ -1,12 +1,10 @@
-"use client";
-import { useAppContext } from '@/context/AppContext';
+import Hero from '@/components/Hero';
 
 export default function Page() {
-  const { theme } = useAppContext();
 
   return (
     <div>
-      <p>{theme}</p>
+      <Hero />
     </div>
   )
 }
