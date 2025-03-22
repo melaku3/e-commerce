@@ -17,10 +17,10 @@ export default function RootLayout({ children, }: Readonly<{ children: React.Rea
       <html lang="en">
         <body>
           <AppProvider>
-            <header className='sticky top-0 bg-white border-b border-gray-400 p-4 sm:px-6 lg:px-8'>
+            <header className='sticky top-0 z-50 bg-white border-b border-gray-400 p-4 sm:px-6 lg:px-8'>
               <Navbar />
             </header>
-            <main className='relative w-full -z-50 mx-auto sm:px-6 lg:px-20 py-8'>
+            <main className='relative w-full mx-auto sm:px-6 lg:px-20 py-8'>
               {children}
             </main>
             <footer>
