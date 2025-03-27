@@ -1,10 +1,6 @@
 import app from "./app";
-import dotenv from "dotenv";
 import mongoose from "mongoose";
 import db from "./config/db";
-
-// Load environment variables 
-dotenv.config();
 
 // Connect to MongoDB
 db();
