@@ -6,7 +6,7 @@ const productSchema = new mongoose.Schema({
     slug: { type: String, required: true, unique: true },
     description: { type: String, required: true },
     price: { type: Number, required: true, min: 0 },
-    category: { type: mongoose.Schema.Types.ObjectId, ref: "Category", required: true, index: true },
+    category: { type: mongoose.Schema.Types.ObjectId, ref: "category", required: true, index: true },
     images: [{ type: String, required: true }],
     countInStock: { type: Number, required: true, min: 0 },
     rating: { type: Number, required: true, min: 0, max: 5, default: 0 },
@@ -17,7 +17,7 @@ const productSchema = new mongoose.Schema({
     discountPrice: { type: Number },
     discountStartDate: { type: Date },
     discountEndDate: { type: Date },
-    reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: "Review", index: true }],
+    reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: "review", index: true }],
 }, { timestamps: true });
 
 productSchema.path("discountPrice").validate(function (value: number) {
