@@ -34,4 +34,13 @@ export const productSchema = z.object({
     discountEndDate: z.date().optional(),
     reviews: z.array(z.string().length(24, { message: "Review ID must be exactly 24 characters long." })).optional()
 
-}); 
+});
+
+// review schema
+export const reviewSchema = z.object({
+    id: z.string().length(24, { message: "Review ID must be exactly 24 characters long." }).optional(),
+    productId: z.string().length(24, { message: "Product ID must be exactly 24 characters long." }),
+    userId: z.string().length(24, { message: "User ID must be exactly 24 characters long." }),
+    rating: z.number().min(0, { message: "Rating must be at least 0." }).max(5, { message: "Rating must not exceed 5." }),
+    comment: z.string().max(1000, { message: "Comment must not exceed 1000 characters." }).optional()
+});

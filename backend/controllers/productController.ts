@@ -38,9 +38,14 @@ async function uploadImage(image: UploadedFile): Promise<string> {
 // @docs   Fetch all products
 // @route   GET /api/v1/products
 // @access  Public
-export const getProducts = expressAsyncHandler(async (_req, res) => {
-    const products = await productModel.find({});
-    res.json(products);
+export const getProducts = expressAsyncHandler(async (req, res) => {
+    const { page, limit } = req.query;
+    const pageNumber = Number(page) || 1;
+    const limitNumber = Number(limit) || 10;
+    const skip = (pageNumber - 1) * limitNumber;
+    const products = await productModel.find().skip(skip).limit(limitNumber).populate("category", "name").populate("reviews", "rating comment").select('-createdAt -updatedAt -__v');
+    const totalProducts = await productModel.countDocuments();
+    res.json({ page: pageNumber, totalPages: Math.ceil(totalProducts / limitNumber), totalProducts, products });
 });
 
 // @docs   Fetch single product
@@ -54,7 +59,7 @@ export const getProduct = expressAsyncHandler(async (req, res) => {
         return;
     }
 
-    const product = await productModel.findById(validate.data.id);
+    const product = await productModel.findById(validate.data.id).populate("category", "name").populate("reviews", "rating comment").select('-createdAt -updatedAt -__v');
     if (!product) {
         res.status(404).json({ message: "Product not found" });
         return;
@@ -162,3 +167,4 @@ export const deleteProduct = expressAsyncHandler(async (req, res) => {
     await productModel.findByIdAndDelete(validate.data.id);
     res.json({ message: "Product deleted" });
 });
+

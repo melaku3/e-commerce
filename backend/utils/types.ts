@@ -8,7 +8,7 @@ export interface IUser extends mongoose.Document {
 
 export interface IReview extends mongoose.Document {
     productId: string;
-    name: string;
+    userId: string;
     rating: number;
     comment?: string;
 }
