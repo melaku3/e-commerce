@@ -28,7 +28,7 @@ export default function AutoSlideCarousel({ products, count = 5 }: AutoSlideCaro
       id: product._id,
       text: product.name,
       image: product.images[0] || "https://res.cloudinary.com/dtolkvgly/image/upload/v1743674356/Placeholder-_-Glossary_dt50gb.svg",
-      link: `/products/${product._id}`,
+      link: `/all-products/${product._id}`,
       description: product.description,
       price: product.price,
     }))

@@ -2,16 +2,9 @@ import type React from "react"
 import { ClerkProvider } from "@clerk/nextjs"
 import { AppProvider } from "@/context/AppContext"
 import Navbar from "@/components/Navbar"
-import type { Metadata } from "next"
 import "./globals.css"
 import Footer from "@/components/Footer"
 import { ThemeProvider } from "@/components/ThemeProvider"
-
-export const metadata: Metadata = {
-  title: "Your Modern E-commerce Destination",
-  description: "Korah-Store is a modern e-commerce platform offering a seamless shopping experience.",
-  viewport: "width=device-width, initial-scale=1, maximum-scale=5",
-}
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
