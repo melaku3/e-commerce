@@ -6,8 +6,12 @@ import { categorySchema } from "../utils/validation";
 // @route   GET /api/v1/categories
 // @access  Public
 export const getCategories = expressAsyncHandler(async (_req, res) => {
-    const categories = await categoryModel.find({});
-    res.json(categories);
+    const categories = await categoryModel.find({}).select('-__v');
+    if (!categories) {
+        res.status(404).json({ message: "Categories not found" });
+        return;
+    }
+    res.json({totalCategories: categories.length, categories});
 });
 
 // @desc    Fetch single category
@@ -21,7 +25,7 @@ export const getCategory = expressAsyncHandler(async (req, res) => {
         return;
     }
 
-    const category = await categoryModel.findById(validate.data.id);
+    const category = await categoryModel.findById(validate.data.id).select('-__v');
     if (!category) {
         res.status(404).json({ message: "Category not found" });
         return;

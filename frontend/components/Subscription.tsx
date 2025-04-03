@@ -76,7 +76,7 @@ export default function Subscription() {
                     <div className="relative w-full">
                         <Input type="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} className={cn("pr-4 py-6 text-base", error ? "border-destructive focus-visible:ring-destructive" : "")} disabled={isLoading || isSuccess} aria-label="Email address" aria-invalid={error ? "true" : "false"} aria-describedby={error ? "email-error" : undefined} />
                         {error && (
-                            <p id="email-error" className="mt-1 text-sm text-destructive">
+                            <p id="email-error" className="mt-1 text-sm text-destructive sm:absolute -bottom-6 left-0">
                                 {error}
                             </p>
                         )}

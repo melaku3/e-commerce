@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <ClerkProvider>
-      <html lang="en" className="scroll-smooth">
+      <html className="light" style={{ colorScheme: "light" }}>
         <body className="min-h-screen flex flex-col bg-background text-foreground antialiased">
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
             <AppProvider>

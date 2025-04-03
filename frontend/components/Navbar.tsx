@@ -67,14 +67,14 @@ export default function Navbar() {
         <nav className="flex items-center justify-between text-foreground">
             {/* Logo Section */}
             <Link href={"/"} className="flex items-center">
-                <Image src={"/logo.png"} className="cursor-pointer dark:brightness-[1.2] dark:contrast-[1.2]" width={200} height={100} alt="Korah-store brand" priority />
+                <Image src={"https://res.cloudinary.com/dtolkvgly/image/upload/v1743677740/logo_yjqqmx.png"} className="cursor-pointer dark:brightness-[1.2] dark:contrast-[1.2]" width={175} height={75} alt="Korah-store brand" priority style={{ width: "auto", height: "auto" }} />
             </Link>
 
             {/* Desktop Navigation Links */}
             <ul className="hidden md:flex items-center gap-5">
                 {navLinks.map((link) => (
                     <li key={link.href}>
-                        <Link href={link.href} className={`relative py-2 ${pathname === link.href ? "font-medium text-primary" : "hover:text-primary transition-colors duration-200"}`}                        >
+                        <Link href={link.href} className={`relative py-2 ${pathname === link.href ? "font-medium text-primary" : "hover:text-primary transition-colors duration-200"}`}>
                             {link.label}
                         </Link>
                     </li>
