@@ -43,7 +43,7 @@ export const getProducts = expressAsyncHandler(async (req, res) => {
     const pageNumber = Number(page) || 1;
     const limitNumber = Number(limit) || 10;
     const skip = (pageNumber - 1) * limitNumber;
-    const products = await productModel.find().skip(skip).limit(limitNumber).populate("category", "name").populate("reviews", "rating comment").select('-createdAt -updatedAt -__v');
+    const products = await productModel.find().skip(skip).limit(limitNumber).populate("category", "name").populate("reviews", "rating comment").select('-__v');
     const totalProducts = await productModel.countDocuments();
     res.json({ page: pageNumber, totalPages: Math.ceil(totalProducts / limitNumber), totalProducts, products });
 });
@@ -59,7 +59,7 @@ export const getProduct = expressAsyncHandler(async (req, res) => {
         return;
     }
 
-    const product = await productModel.findById(validate.data.id).populate("category", "name").populate("reviews", "rating comment").select('-createdAt -updatedAt -__v');
+    const product = await productModel.findById(validate.data.id).populate("category", "name").populate("reviews", "rating comment").select('-__v');
     if (!product) {
         res.status(404).json({ message: "Product not found" });
         return;
