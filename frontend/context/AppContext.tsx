@@ -5,6 +5,13 @@ import { createContext, useContext, useEffect, useState, useMemo, useCallback, t
 import axios from "@/config/axios"
 import type { IProduct } from "@/config/types"
 
+interface ProductsResponse {
+    page: number;
+    totalPages: number;
+    totalProducts: number;
+    products: IProduct[];
+}
+
 interface AppContextType {
     // User
     user: ReturnType<typeof useUser>["user"]
@@ -13,7 +20,15 @@ interface AppContextType {
     // Products
     products: IProduct[]
     setProducts: (products: IProduct[]) => void
-    refreshProducts: () => Promise<void>
+    refreshProducts: (page?: number, limit?: number) => Promise<void>
+
+    // Pagination
+    currentPage: number
+    totalPages: number
+    totalProducts: number
+    setCurrentPage: (page: number) => void
+    productsPerPage: number
+    setProductsPerPage: (count: number) => void
 
     // Loading
     loading: boolean
@@ -32,15 +47,24 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     const [products, setProducts] = useState<IProduct[]>([])
     const [loading, setLoading] = useState(true)
 
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1)
+    const [productsPerPage, setProductsPerPage] = useState(10)
+    const [totalPages, setTotalPages] = useState(1)
+    const [totalProducts, setTotalProducts] = useState(0)
+
     // Get user from Clerk
     const { user, isSignedIn } = useUser()
 
     // Fetch products from the server
-    const fetchProducts = useCallback(async (): Promise<void> => {
+    const fetchProducts = useCallback(async (page: number = 1, limit: number = 10): Promise<void> => {
         setLoading(true)
         try {
-            const response = await axios.get<{ products: IProduct[] }>("/products")
+            const response = await axios.get<ProductsResponse>(`/products?page=${page}&limit=${limit}`)
             setProducts(response.data.products)
+            setTotalPages(response.data.totalPages)
+            setTotalProducts(response.data.totalProducts)
+            setCurrentPage(response.data.page)
         } catch (error) {
             console.error("Error fetching products:", error)
         } finally {
@@ -49,12 +73,26 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     }, [])
 
     useEffect(() => {
-        fetchProducts()
-    }, [fetchProducts])
+        fetchProducts(currentPage, productsPerPage)
+    }, [fetchProducts, currentPage, productsPerPage])
 
     const contextValue = useMemo(
-        () => ({ user, isSignedIn: !!isSignedIn, products, setProducts, refreshProducts: fetchProducts, loading, setLoading, }),
-        [user, isSignedIn, products, loading, fetchProducts]
+        () => ({
+            user,
+            isSignedIn: !!isSignedIn,
+            products,
+            setProducts,
+            refreshProducts: fetchProducts,
+            loading,
+            setLoading,
+            currentPage,
+            totalPages,
+            totalProducts,
+            setCurrentPage,
+            productsPerPage,
+            setProductsPerPage
+        }),
+        [user, isSignedIn, products, loading, fetchProducts, currentPage, totalPages, totalProducts, productsPerPage]
     )
 
     return <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>
