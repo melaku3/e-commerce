@@ -39,3 +39,16 @@ export const checkUser = expressAsyncHandler(async (req, res) => {
     }
     res.status(200).json({ exists: true });
 });
+
+// @docs: Get user by clerkUserId
+// @route GET /api/v1/auth/user/:clerkUserId
+// @access Public
+export const getUserByClerkId = expressAsyncHandler(async (req, res) => {
+    const { clerkUserId } = req.params;
+    const user = await userModel.findOne({ clerkUserId }).select("-__v -createdAt -updatedAt");
+    if (!user) {
+        res.status(404).json({ message: "User not found." });
+        return;
+    }
+    res.status(200).json(user);
+});
