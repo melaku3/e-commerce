@@ -12,9 +12,17 @@ interface ProductsResponse {
     products: IProduct[];
 }
 
+interface ILoggedUser {
+    _id: string;
+    clerkUserId: string;
+    email: string;
+    role: string;
+}
+
 interface AppContextType {
     // User
     user: ReturnType<typeof useUser>["user"]
+    loggedUser: ILoggedUser | null
     isSignedIn: boolean
 
     // Products
@@ -46,6 +54,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     // State for products and loading
     const [products, setProducts] = useState<IProduct[]>([])
     const [loading, setLoading] = useState(true)
+    const [loggedUser, setLoggedUser] = useState<ILoggedUser | null>(null)
 
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1)
@@ -72,27 +81,31 @@ export const AppProvider = ({ children }: AppProviderProps) => {
         }
     }, [])
 
+    // Fetch user data from the server
+    const fetchUserData = useCallback(async () => {
+        if (user) {
+            try {
+                const response = await axios.get<ILoggedUser>(`/auth/user/${user.id}`)
+                setLoggedUser(response.data)
+            } catch (error) {
+                console.error("Error fetching user data:", error)
+            }
+        }
+    }, [user]);
+
     useEffect(() => {
         fetchProducts(currentPage, productsPerPage)
     }, [fetchProducts, currentPage, productsPerPage])
 
+    useEffect(() => {
+        if (isSignedIn) {
+            fetchUserData()
+        }
+    }, [isSignedIn, fetchUserData])
+
     const contextValue = useMemo(
-        () => ({
-            user,
-            isSignedIn: !!isSignedIn,
-            products,
-            setProducts,
-            refreshProducts: fetchProducts,
-            loading,
-            setLoading,
-            currentPage,
-            totalPages,
-            totalProducts,
-            setCurrentPage,
-            productsPerPage,
-            setProductsPerPage
-        }),
-        [user, isSignedIn, products, loading, fetchProducts, currentPage, totalPages, totalProducts, productsPerPage]
+        () => ({ user, loggedUser, isSignedIn: !!isSignedIn, products, setProducts, refreshProducts: fetchProducts, loading, setLoading, currentPage, totalPages, totalProducts, setCurrentPage, productsPerPage, setProductsPerPage }),
+        [user, loggedUser, isSignedIn, products, loading, fetchProducts, currentPage, totalPages, totalProducts, productsPerPage]
     )
 
     return <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>
