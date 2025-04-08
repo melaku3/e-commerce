@@ -37,6 +37,26 @@ export const getReview = expressAsyncHandler(async (req, res) => {
     res.json(review)
 })
 
+// @docs Fetch reviews by productId
+// @route GET /api/v1/reviews/product/:productId
+// @access Public
+export const getReviewsByProductId = expressAsyncHandler(async (req, res) => {
+    const validate = reviewSchema.partial().safeParse(req.params);
+    if (!validate.success) {
+        let errMsg = validate.error.errors[0].message;
+        res.status(400).json({ message: `${errMsg === 'Required' ? `${validate.error.issues[0].path} is ${errMsg.toLocaleLowerCase()}` : errMsg}` });
+        return;
+    }
+
+    const reviews = await reviewModel.find({ productId: validate.data.productId }).populate("productId", "_id name slug price rating").populate("userId", "_id name email").select('-__v');
+    if (!reviews) {
+        res.status(404).json({ message: "Reviews not found" });
+        return;
+    }
+
+    res.json(reviews)
+})
+
 // @desc    Create review
 // @route   POST /api/v1/reviews
 // @access  Public
