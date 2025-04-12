@@ -12,14 +12,14 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader } from "@/components/ui/card"
 import ColorSwatch from "./ColorSwatch"
 import ProductDetailDrawer from "./ProductDetailDrawer"
-import type { IProduct } from "@/config/types"
+import type { Product } from "@/types/api"
 
-interface ProductCardProps extends IProduct {
+interface ProductCardProps extends Product {
     isFavorite?: boolean
 }
 
 export default function ProductCard(props: ProductCardProps) {
-    const { name, description, price, images, category, color, countInStock, rating, size, isFavorite = false } = props
+    const { name, description, price, images, category, color = [], countInStock, rating, size = [], isFavorite = false } = props
 
     const [favorite, setFavorite] = useState(isFavorite)
     const [isHovered, setIsHovered] = useState(false)
@@ -54,12 +54,12 @@ export default function ProductCard(props: ProductCardProps) {
         return (
             <div className="mt-2 text-sm text-muted-foreground animate-fadeIn">
                 <p>• {countInStock > 0 ? `${countInStock} in stock` : "Out of stock"}</p>
-                {size.length > 0 && <p>• {size.length} sizes available</p>}
-                {color.length > 0 && <p>• {color.length} colors available</p>}
+                {size?.length > 0 && <p>• {size.length} sizes available</p>}
+                {color?.length > 0 && <p>• {color.length} colors available</p>}
                 <p>• Free shipping</p>
             </div>
         )
-    }, [isHovered, countInStock, size.length, color.length])
+    }, [isHovered, countInStock, size?.length, color?.length])
 
     const imageUrl = images[0] || "https://res.cloudinary.com/dtolkvgly/image/upload/v1743674356/Placeholder-_-Glossary_dt50gb.svg"
     const isInStock = countInStock > 0
@@ -99,14 +99,14 @@ export default function ProductCard(props: ProductCardProps) {
             <CardContent className="p-4">
                 <CardDescription className="line-clamp-2 h-10">{description}</CardDescription>
 
-                {color.length > 0 && (
+                {color?.length > 0 && (
                     <div className="mt-3">
                         <div className="flex gap-1 mt-1">
-                            {color.slice(0, 4).map((c) => (
+                            {color?.slice(0, 4).map((c) => (
                                 <ColorSwatch key={c} color={c} className="w-4 h-4" />
                             ))}
-                            {color.length > 4 && (
-                                <span className="text-xs text-muted-foreground flex items-center">+{color.length - 4}</span>
+                            {color?.length > 4 && (
+                                <span className="text-xs text-muted-foreground flex items-center">+{color?.length - 4}</span>
                             )}
                         </div>
                     </div>

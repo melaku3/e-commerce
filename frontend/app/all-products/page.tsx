@@ -1,20 +1,22 @@
 "use client";
 
 import { useState, useMemo, useCallback } from "react";
-import { useAppContext } from "@/context/AppContext";
 import { ProductGrid } from "./components/ProductGrid";
 import { ProductFilters } from "./components/ProductFilters";
 import { ProductSort } from "./components/ProductSort";
 import { ProductsHeader } from "./components/ProductsHeader";
 import { Pagination } from "./components/Pagination";
-import useProductFilters from "./hooks/useProductFilters";
+import useProductFilters from "../../hooks/useProductFilters";
 import { filterProducts, sortProducts } from "./utils/productUtils";
 import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { useProducts } from "@/hooks/useProducts";
 
 export default function AllProductsPage() {
-  const { products, loading, currentPage, totalPages, totalProducts, productsPerPage, setCurrentPage, setProductsPerPage, refreshProducts } = useAppContext();
+  const { products, isLoading, pagination, refreshProducts } = useProducts();
+  const { currentPage, totalPages, totalProducts, productsPerPage, setCurrentPage, setProductsPerPage } = pagination;
+
   const [sortOption, setSortOption] = useState<string>("featured");
   const { filters, availableFilters, updateFilter, resetFilters } = useProductFilters(products);
 
@@ -41,13 +43,13 @@ export default function AllProductsPage() {
   const handleItemsPerPageChange = useCallback((value: string) => {
     const newLimit = parseInt(value, 10);
     setProductsPerPage(newLimit);
-    setCurrentPage(1); 
+    setCurrentPage(1);
     refreshProducts(1, newLimit);
   }, [setProductsPerPage, setCurrentPage, refreshProducts]);
 
   return (
     <div className="flex flex-col space-y-8">
-      <ProductsHeader totalProducts={totalProducts} isLoading={loading} />
+      <ProductsHeader totalProducts={totalProducts} isLoading={isLoading} />
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
         <div className="md:col-span-1">
@@ -80,7 +82,7 @@ export default function AllProductsPage() {
 
           <Separator className="mb-6" />
 
-          <ProductGrid products={processedProducts} isLoading={loading} />
+          <ProductGrid products={processedProducts} isLoading={isLoading} />
 
           <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
         </div>

@@ -1,54 +1,42 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { CheckCircle, Loader2, Mail } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 export default function Subscription() {
+    const [mounted, setMounted] = useState(false)
     const [email, setEmail] = useState<string>("")
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [isSuccess, setIsSuccess] = useState<boolean>(false)
     const [error, setError] = useState<string | null>(null)
 
-    const validateEmail = (email: string): boolean => {
-        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-        return regex.test(email)
-    }
+    useEffect(() => {
+        setMounted(true)
+    }, [])
+
+    if (!mounted) return null
+
+    const validateEmail = (email: string): boolean => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
         e.preventDefault()
         setError(null)
 
-        // Validate email
-        if (!email) {
-            setError("Please enter your email address")
-            return
-        }
-
-        if (!validateEmail(email)) {
-            setError("Please enter a valid email address")
-            return
-        }
+        if (!email) return setError("Please enter your email address")
+        if (!validateEmail(email)) return setError("Please enter a valid email address")
 
         setIsLoading(true)
-
         try {
-            // Simulate API call
             await new Promise((resolve) => setTimeout(resolve, 1500))
-
-            // Success
             setIsSuccess(true)
             setEmail("")
-
-            // Reset success state after 3 seconds
-            setTimeout(() => {
-                setIsSuccess(false)
-            }, 3000)
+            setTimeout(() => setIsSuccess(false), 3000)
         } catch (error) {
-            console.log(`Subscribe error: ${error}`)
+            console.error("Subscribe error:", error)
             setError("Failed to subscribe. Please try again.")
         } finally {
             setIsLoading(false)
@@ -57,7 +45,6 @@ export default function Subscription() {
 
     return (
         <div className="relative overflow-hidden rounded-lg border bg-background p-8 shadow-md">
-            {/* Decorative background elements */}
             <div className="absolute -top-24 -right-24 h-64 w-64 rounded-full bg-primary/5 blur-3xl" />
             <div className="absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-primary/5 blur-3xl" />
 
@@ -74,7 +61,7 @@ export default function Subscription() {
 
                 <form onSubmit={handleSubmit} className="flex w-full max-w-md flex-col sm:flex-row items-center gap-3">
                     <div className="relative w-full">
-                        <Input type="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} className={cn("pr-4 py-6 text-base", error ? "border-destructive focus-visible:ring-destructive" : "")} disabled={isLoading || isSuccess} aria-label="Email address" aria-invalid={error ? "true" : "false"} aria-describedby={error ? "email-error" : undefined} />
+                        <Input type="email" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} className={cn("pr-4 py-6 text-base", error ? "border-destructive focus-visible:ring-destructive" : "")} disabled={isLoading || isSuccess} aria-label="Email address" aria-invalid={!!error} aria-describedby={error ? "email-error" : undefined} />
                         {error && (
                             <p id="email-error" className="mt-1 text-sm text-destructive sm:absolute -bottom-6 left-0">
                                 {error}
@@ -104,4 +91,3 @@ export default function Subscription() {
         </div>
     )
 }
-

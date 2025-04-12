@@ -3,10 +3,10 @@
 import { memo } from "react"
 import ProductCard from "@/components/ProductCard"
 import { ProductSkeleton } from "./ProductSkeleton"
-import type { IProduct } from "@/config/types"
+import type { Product } from "@/types/api"
 
 interface ProductGridProps {
-  products: IProduct[]
+  products: Product[]
   isLoading: boolean
 }
 

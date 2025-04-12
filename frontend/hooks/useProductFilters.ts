@@ -1,26 +1,9 @@
 "use client"
 
 import { useState, useMemo, useCallback } from "react"
-import type { IProduct } from "@/config/types"
+import type { Product, AvailableFilters, ProductFilters } from "@/types/api"
 
-export interface ProductFilters {
-    categories: string[]
-    brands: string[]
-    colors: string[]
-    priceRange: number[]
-}
-
-export interface AvailableFilters {
-    categories: string[]
-    brands: string[]
-    colors: string[]
-    priceRange: {
-        min: number
-        max: number
-    }
-}
-
-export default function useProductFilters(products: IProduct[]) {
+export default function useProductFilters(products: Product[]) {
     const [filters, setFilters] = useState<ProductFilters>({ categories: [], brands: [], colors: [], priceRange: [0, 1000] })
 
     // Calculate available filter options based on products
@@ -31,10 +14,10 @@ export default function useProductFilters(products: IProduct[]) {
         const categories = Array.from(new Set(products.map((product) => product.category.name)))
 
         // Extract unique brands
-        const brands = Array.from(new Set(products.map((product) => product.brand)))
+        const brands = Array.from(new Set(products.map((product) => product.brand))).filter((brand): brand is string => brand !== undefined)
 
         // Extract unique colors (flatten the color arrays)
-        const colors = Array.from(new Set(products.flatMap((product) => product.color)))
+        const colors = Array.from(new Set(products.flatMap((product) => product.color))).filter((color): color is string => color !== undefined)
 
         // Calculate min and max price
         const prices = products.map((product) => product.price)
@@ -93,4 +76,3 @@ export default function useProductFilters(products: IProduct[]) {
 
     return { filters, updateFilter, resetFilters, availableFilters }
 }
-

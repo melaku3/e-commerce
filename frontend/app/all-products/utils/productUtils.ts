@@ -1,9 +1,9 @@
-import type { IProduct } from "@/config/types"
+import type { Product } from "@/types/api"
 
 /**
  * Sorts products based on the provided sort option
  */
-export function sortProducts(products: IProduct[], sortOption: string): IProduct[] {
+export function sortProducts(products: Product[], sortOption: string): Product[] {
     const sortedProducts = [...products]
 
     switch (sortOption) {
@@ -19,23 +19,21 @@ export function sortProducts(products: IProduct[], sortOption: string): IProduct
 /**
  * Filters products based on the provided filters
  */
-export function filterProducts(products: IProduct[], categories: string[], brands: string[], colors: string[], priceRange: number[]): IProduct[] {
+export function filterProducts(products: Product[], categories: string[], brands: string[], colors: string[], priceRange: number[]): Product[] {
     return products.filter((product) => {
         // Filter by category
         if (categories.length > 0 && !categories.includes(product.category.name)) return false
 
         // Filter by brand
-        if (brands.length > 0 && !brands.includes(product.brand)) return false
+        if (brands.length > 0 && (!product.brand || !brands.includes(product.brand))) return false
 
         // Filter by color
-        if (colors.length > 0 && !product.color.some((c) => colors.includes(c))) return false
+        if (colors.length > 0 && (!product.color || !product.color.some((c) => colors.includes(c)))) return false
 
 
         // Filter by price range
         if (priceRange.length === 2) {
-            if (product.price < priceRange[0] || product.price > priceRange[1]) {
-                return false
-            }
+            if (product.price < priceRange[0] || product.price > priceRange[1]) return false
         }
 
         return true
@@ -45,7 +43,7 @@ export function filterProducts(products: IProduct[], categories: string[], brand
 /**
  * Extracts available filter options from products
  */
-export function extractAvailableFilters(products: IProduct[]) {
+export function extractAvailableFilters(products: Product[]) {
     if (!products.length) return { categories: [], brands: [], colors: [], priceRange: { min: 0, max: 1000 } }
 
     // Extract unique categories

@@ -3,19 +3,19 @@ import AutoSlideCarouselProps from '@/components/AutoSlideCarousel';
 import ProductCard from '@/components/ProductCard';
 import Subscription from '@/components/Subscription';
 import { Button } from '@/components/ui/button';
-import { useAppContext } from '@/context/AppContext';
+import { useProducts } from '@/hooks/useProducts';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
 export default function Page() {
-  const { products, loading } = useAppContext()
+  const { products, isLoading } = useProducts()
   const topRatedProducts = [...products].sort((a, b) => b.rating - a.rating).slice(0, 5)
 
   return (
     <div className="flex flex-col space-y-16">
       <AutoSlideCarouselProps products={products} />
       <div className="container mx-auto py-8 px-4">
-        {loading ? (
+        {isLoading ? (
           <div className="flex justify-center items-center h-40">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
           </div>

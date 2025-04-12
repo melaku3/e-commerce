@@ -8,10 +8,10 @@ import Image from "next/image"
 import Link from "next/link"
 import { FaLongArrowAltRight, FaPause, FaPlay } from "react-icons/fa"
 import { cn } from "@/lib/utils"
-import type { IProduct } from "@/config/types"
+import type { Product } from "@/types/api"
 
 interface AutoSlideCarouselProps {
-  products: IProduct[]
+  products: Product[]
   count?: number
 }
 
