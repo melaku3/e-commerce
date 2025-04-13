@@ -8,19 +8,19 @@ export default function SocialLinks() {
                 <FaFacebook className="h-6 w-6 text-primary" />
             </Link>
 
-            <Link href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="bg-card hover:bg-accent rounded-full p-3 transition-colors" aria-label="Instagram"            >
+            <Link href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="bg-card hover:bg-accent rounded-full p-3 transition-colors" aria-label="Instagram">
                 <FaInstagram className="h-6 w-6 text-primary" />
             </Link>
 
-            <Link href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="bg-card hover:bg-accent rounded-full p-3 transition-colors" aria-label="Twitter"            >
+            <Link href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="bg-card hover:bg-accent rounded-full p-3 transition-colors" aria-label="Twitter">
                 <FaTwitter className="h-6 w-6 text-primary" />
             </Link>
 
-            <Link href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="bg-card hover:bg-accent rounded-full p-3 transition-colors" aria-label="LinkedIn"            >
+            <Link href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="bg-card hover:bg-accent rounded-full p-3 transition-colors" aria-label="LinkedIn">
                 <FaLinkedin className="h-6 w-6 text-primary" />
             </Link>
 
-            <Link href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="bg-card hover:bg-accent rounded-full p-3 transition-colors" aria-label="YouTube"            >
+            <Link href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="bg-card hover:bg-accent rounded-full p-3 transition-colors" aria-label="YouTube">
                 <FaYoutube className="h-6 w-6 text-primary" />
             </Link>
         </div>

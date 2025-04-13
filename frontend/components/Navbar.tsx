@@ -50,9 +50,9 @@ const Navbar = () => {
                 </ul>
 
                 {/* Right Side Actions */}
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 sm:gap-4">
                     <ThemeToggle />
-                    <CartButton />
+                    {isSignedIn && <CartButton />}
 
                     {isSignedIn ? (
                         <UserButton>
@@ -60,11 +60,10 @@ const Navbar = () => {
                                 <UserButton.Action label="Home" labelIcon={<FaHome />} onClick={() => router.push("/")} />
                                 <UserButton.Action label="Products" labelIcon={<FaGift />} onClick={() => router.push("/all-products")} />
                                 <UserButton.Action label="My Orders" labelIcon={<FaShoppingBag />} onClick={() => router.push("/my-orders")} />
-                                <UserButton.Action label="Cart" labelIcon={<FaShoppingCart />} onClick={() => router.push("/cart")} />
                             </UserButton.MenuItems>
                         </UserButton>
                     ) : (
-                        <button className="flex items-center gap-2 cursor-pointer hover:text-primary transition-colors duration-200" onClick={() => openSignIn()} aria-label="Sign in"                        >
+                        <button className="flex items-center gap-1 sm:gap-2 cursor-pointer hover:text-primary transition-colors duration-200" onClick={() => openSignIn()} aria-label="Sign in">
                             <FaRegUser />
                             <span className="hidden sm:inline">Account</span>
                         </button>

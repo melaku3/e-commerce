@@ -66,14 +66,7 @@ export default function ProductCard(props: ProductCardProps) {
 
     return (
         <Card
-            className={cn("overflow-hidden transition-all duration-300 h-full cursor-pointer", isHovered && "transform scale-[1.02] shadow-lg")}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-            onClick={handleCardClick}
-            tabIndex={0}
-            onKeyDown={(e) => e.key === "Enter" && handleCardClick()}
-            role="button"
-            aria-label={`View details for ${name}`}>
+            className={cn("overflow-hidden transition-all duration-300 h-full cursor-pointer", isHovered && "transform scale-[1.02] shadow-lg")} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} onClick={handleCardClick} tabIndex={0} onKeyDown={(e) => e.key === "Enter" && handleCardClick()} role="button" aria-label={`View details for ${name}`}>
             <div className="relative">
                 <div className="aspect-[4/3] relative overflow-hidden m-0 p-0">
                     <Image src={imageUrl} alt={`Product image of ${name}`} fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" className="object-cover transition-transform duration-300 hover:scale-105" priority={false} />

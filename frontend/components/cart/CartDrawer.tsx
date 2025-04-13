@@ -67,13 +67,7 @@ export default function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
                 {items.map((item) => (
                   <div key={item._id} className="flex gap-4">
                     <div className="h-20 w-20 flex-shrink-0 overflow-hidden rounded-md border">
-                      <Image
-                        src={item.image || "/placeholder.svg"}
-                        alt={item.name}
-                        width={80}
-                        height={80}
-                        className="h-full w-full object-cover"
-                      />
+                      <Image src={item.image || "/placeholder.svg"} alt={item.name} width={80} height={80} className="h-full w-full object-cover" />
                     </div>
                     <div className="flex flex-1 flex-col">
                       <div className="flex justify-between text-base font-medium">
@@ -94,35 +88,15 @@ export default function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
                       </div>
                       <div className="flex items-center justify-between text-sm mt-2">
                         <div className="flex items-center border rounded-md">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 rounded-none rounded-l-md"
-                            onClick={() => updateQuantity(item._id, item.quantity - 1)}
-                            disabled={item.quantity <= 1}
-                            aria-label="Decrease quantity"
-                          >
+                          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-none rounded-l-md" onClick={() => updateQuantity(item._id, item.quantity - 1)} disabled={item.quantity <= 1} aria-label="Decrease quantity">
                             <Minus className="h-3 w-3" />
                           </Button>
                           <span className="w-8 text-center text-sm">{item.quantity}</span>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 rounded-none rounded-r-md"
-                            onClick={() => updateQuantity(item._id, item.quantity + 1)}
-                            disabled={item.quantity >= item.countInStock}
-                            aria-label="Increase quantity"
-                          >
+                          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-none rounded-r-md" onClick={() => updateQuantity(item._id, item.quantity + 1)} disabled={item.quantity >= item.countInStock} aria-label="Increase quantity">
                             <Plus className="h-3 w-3" />
                           </Button>
                         </div>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                          onClick={() => removeFromCart(item._id)}
-                          aria-label="Remove item"
-                        >
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive" onClick={() => removeFromCart(item._id)} aria-label="Remove item">
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>

@@ -117,23 +117,11 @@ export default function ProductDetailDrawer({ product, open, onOpenChange, onAdd
 
         <DrawerFooter className="border-t px-4 py-4 md:px-6">
           <div className="mx-auto w-full max-w-4xl">
-            <Button
-              disabled={product.countInStock === 0}
-              className="w-full"
-              size="lg"
-              onClick={handleAddToCart}
-              aria-label={product.countInStock > 0 ? "Add to Cart" : "Out of Stock"}
-            >
+            <Button disabled={product.countInStock === 0} className="w-full" size="lg" onClick={handleAddToCart} aria-label={product.countInStock > 0 ? "Add to Cart" : "Out of Stock"}>
               {product.countInStock > 0 ? "Add to Cart" : "Out of Stock"}
             </Button>
             <DrawerClose asChild>
-              <Button
-                variant="outline"
-                className="w-full mt-2"
-                onClick={(e) => {
-                  e.stopPropagation()
-                }}
-              >
+              <Button variant="outline" className="w-full mt-2" onClick={(e) => { e.stopPropagation() }}>
                 Continue Shopping
               </Button>
             </DrawerClose>
