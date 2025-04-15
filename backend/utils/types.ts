@@ -35,3 +35,38 @@ export interface IProduct extends mongoose.Document {
     discountEndDate?: Date,
     reviews?: IReview[];
 }
+
+export interface IOrderItem {
+    productId: mongoose.Schema.Types.ObjectId;
+    name: string;
+    quantity: number;
+    image: string;
+    price: number;
+}
+
+export interface IShippingAddress {
+    fullName: string;
+    street: string;
+    city: string;
+    region: string;
+    postalCode: string;
+    country: string;
+}
+
+export interface IOrder extends mongoose.Document {
+    userId: mongoose.Schema.Types.ObjectId;
+    orderItems: mongoose.Schema.Types.ObjectId[];
+    shippingAddress: IShippingAddress;
+    paymentMethod: string;
+    itemsPrice: number;
+    shippingPrice: number;
+    taxPrice: number;
+    totalPrice: number;
+    isPaid: boolean;
+    paidAt?: Date;
+    isDelivered: boolean;
+    deliveredAt?: Date;
+    status: "pending" | "confirmed" | "shipped" | "delivered" | "cancelled";
+    createdAt?: Date;
+    updatedAt?: Date;
+}
