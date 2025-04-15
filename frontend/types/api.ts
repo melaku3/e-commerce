@@ -195,3 +195,39 @@ export interface UseCartReturn {
   isLoading: boolean
   isSyncing: boolean
 }
+
+// Order types
+export interface OrderItem {
+  name: string
+  image: string
+  price: number
+  quantity: number
+  productId: string
+}
+
+export interface ShippingAddress {
+  fullName: string
+  street: string
+  city: string
+  region: string
+  postalCode: string
+  country: string
+}
+
+export type OrderStatus = "pending" | "shipped" | "delivered" | "cancelled"
+
+export interface OrderPayload {
+  orderItems: OrderItem[]
+  shippingAddress: ShippingAddress
+  userId: string
+  paymentMethod: string
+  itemsPrice: number
+  shippingPrice: number
+  taxPrice: number
+  totalPrice: number
+  isPaid?: boolean
+  paidAt?: Date
+  isDelivered?: boolean
+  deliveredAt?: Date
+  status?: OrderStatus
+}

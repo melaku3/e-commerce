@@ -1,3 +1,6 @@
+"use client"
+
+import { useState } from "react"
 import { CreditCard } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -5,7 +8,20 @@ import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 
-export function PaymentMethodForm() {
+interface PaymentMethodFormProps {
+  onPaymentMethodChange?: (method: string) => void
+}
+
+export function PaymentMethodForm({ onPaymentMethodChange }: PaymentMethodFormProps) {
+  const [activeTab, setActiveTab] = useState("card")
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value)
+    if (onPaymentMethodChange) {
+      onPaymentMethodChange(value === "card" ? "Credit Card" : "PayPal")
+    }
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -15,7 +31,7 @@ export function PaymentMethodForm() {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="card" className="w-full">
+        <Tabs defaultValue="card" value={activeTab} onValueChange={handleTabChange} className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="card">Credit Card</TabsTrigger>
             <TabsTrigger value="paypal">PayPal</TabsTrigger>

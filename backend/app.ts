@@ -13,6 +13,7 @@ import userRouter from './routes/userRoute';
 import categoryRouter from './routes/categoryRoute';
 import productRouter from './routes/productRoute';
 import reviewRouter from './routes/reviewRoute';
+import orderRouter from './routes/orderRoute';
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use('/api/v1/auth', userRouter);
 app.use('/api/v1/categories', categoryRouter);
 app.use('/api/v1/products', productRouter);
 app.use('/api/v1/reviews', reviewRouter)
+app.use('/api/v1/orders', orderRouter);
 
 // error handler
 app.use(errorHandler);

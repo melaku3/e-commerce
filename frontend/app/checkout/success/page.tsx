@@ -24,7 +24,7 @@ export default function CheckoutSuccessPage() {
           <CardDescription>Thank you for your purchase</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p>We've sent a confirmation email with your order details and tracking information.</p>
+          <p>We`&apos;ve sent a confirmation email with your order details and tracking information.</p>
           <div className="rounded-lg bg-muted p-4">
             <p className="text-sm text-muted-foreground">
               Order #: <span className="font-medium text-foreground">{orderNumber || "Processing..."}</span>

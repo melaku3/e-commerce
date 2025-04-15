@@ -2,11 +2,9 @@
 
 import type React from "react"
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { useUser } from "@/hooks/useUser"
-import { toast } from "sonner"
+import { useState, useCallback } from "react"
 import { ChevronLeft, ShoppingBag } from "lucide-react"
+import { useUser } from "@/hooks/useUser"
 import Link from "next/link"
 
 import { useCart } from "@/hooks/useCart"
@@ -18,11 +16,14 @@ import { PaymentMethodForm } from "@/components/checkout/PaymentMethodForm"
 import { OrderSummary } from "@/components/checkout/OrderSummary"
 
 export default function CheckoutPage() {
-  const router = useRouter()
   const { user, isSignedIn } = useUser()
-  const { items, summary, clearCart, isLoading } = useCart()
+  const { items, summary, isLoading } = useCart()
   const [shippingMethod, setShippingMethod] = useState("standard")
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [paymentMethod, setPaymentMethod] = useState("Credit Card")
+
+  // Form validation state
+  const [errors, setErrors] = useState<Record<string, string>>({})
+  const [touched, setTouched] = useState<Record<string, boolean>>({})
 
   // Form state
   const [formData, setFormData] = useState({ firstName: user?.firstName || "", lastName: user?.lastName || "", email: user?.emailAddresses[0]?.emailAddress || "", address: "", city: "", state: "", zipCode: "", country: "Ethiopia" })
@@ -30,52 +31,25 @@ export default function CheckoutPage() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
-  }
 
-  const handlePlaceOrder = async (e: React.FormEvent) => {
-    e.preventDefault()
-
-    if (items.length === 0) {
-      toast.error("Your cart is empty")
-      return
-    }
-
-    // Validate form
-    const requiredFields = ["firstName", "lastName", "email", "address", "city", "state", "zipCode"]
-    const missingFields = requiredFields.filter((field) => !formData[field as keyof typeof formData])
-
-    if (missingFields.length > 0) {
-      toast.error("Please fill in all required fields", {
-        description: `Missing: ${missingFields.join(", ")}`,
-      })
-      return
-    }
-
-    setIsSubmitting(true)
-
-    try {
-      // In a real app, you would send the order to your backend here
-      await new Promise((resolve) => setTimeout(resolve, 1500)) // Simulate API call
-
-      // Clear cart after successful order
-      clearCart()
-
-      // Show success message
-      toast.success("Order placed successfully!", {
-        description: "Thank you for your purchase",
-      })
-
-      // Redirect to success page
-      router.push("/checkout/success")
-    } catch (error) {
-      console.log("Error placing order:", error)
-      toast.error("Failed to place order", {
-        description: "Please try again later",
-      })
-    } finally {
-      setIsSubmitting(false)
+    // Clear error when user types
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }))
     }
   }
+
+  const handlePaymentMethodChange = (method: string) => {
+    setPaymentMethod(method)
+  }
+
+  const handleSetTouched = useCallback((field: string) => {
+    setTouched((prev) => ({ ...prev, [field]: true }))
+  }, [])
+
+  const setAllTouched = useCallback(() => {
+    const allFields = { firstName: true, lastName: true, email: true, address: true, city: true, state: true, zipCode: true, country: true }
+    setTouched(allFields)
+  }, [])
 
   if (isLoading) {
     return (
@@ -106,7 +80,7 @@ export default function CheckoutPage() {
     <div className="container max-w-6xl py-8">
       <div className="mb-8">
         <Button variant="ghost" size="sm" asChild className="mb-4">
-          <Link href="/all-products" className="flex items-center">
+          <Link href="/" className="flex items-center">
             <ChevronLeft className="mr-2 h-4 w-4" />
             Continue Shopping
           </Link>
@@ -115,25 +89,23 @@ export default function CheckoutPage() {
         <p className="text-muted-foreground">Complete your purchase</p>
       </div>
 
-      <form onSubmit={handlePlaceOrder}>
-        <div className="grid gap-8 lg:grid-cols-3">
-          {/* Customer Information and Shipping */}
-          <div className="lg:col-span-2 space-y-6">
-            <CustomerInformationForm formData={formData} handleInputChange={handleInputChange} isSignedIn={isSignedIn} />
+      <div className="grid gap-8 lg:grid-cols-3">
+        {/* Customer Information and Shipping */}
+        <div className="lg:col-span-2 space-y-6">
+          <CustomerInformationForm formData={formData} handleInputChange={handleInputChange} isSignedIn={isSignedIn} errors={errors} touched={touched} setTouched={handleSetTouched} />
 
-            <ShippingAddressForm formData={formData} handleInputChange={handleInputChange} />
+          <ShippingAddressForm formData={formData} handleInputChange={handleInputChange} errors={errors} touched={touched} setTouched={handleSetTouched} />
 
-            <ShippingMethodSelector shippingMethod={shippingMethod} setShippingMethod={setShippingMethod} shippingCost={summary.shipping} />
+          <ShippingMethodSelector shippingMethod={shippingMethod} setShippingMethod={setShippingMethod} shippingCost={summary.shipping} />
 
-            <PaymentMethodForm />
-          </div>
-
-          {/* Order Summary */}
-          <div className="space-y-6">
-            <OrderSummary items={items} summary={summary} shippingMethod={shippingMethod} isSubmitting={isSubmitting} />
-          </div>
+          <PaymentMethodForm onPaymentMethodChange={handlePaymentMethodChange} />
         </div>
-      </form>
+
+        {/* Order Summary */}
+        <div className="space-y-6">
+          <OrderSummary items={items} summary={summary} shippingMethod={shippingMethod} formData={formData} paymentMethod={paymentMethod} errors={errors} setErrors={setErrors} touched={touched} setAllTouched={setAllTouched} />
+        </div>
+      </div>
     </div>
   )
 }

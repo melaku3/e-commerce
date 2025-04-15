@@ -1,20 +1,136 @@
+"use client"
+
 import { Package } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { CheckoutItemCard } from "./CheckoutItemCard"
-import type { CartItem, CartSummary } from "@/types/api"
+import { usePlaceOrder } from "@/hooks/usePlaceOrder"
+import { useUser } from "@/hooks/useUser"
+import { useCart } from "@/hooks/useCart"
+import { toast } from "sonner"
+import type { CartItem, CartSummary, OrderPayload } from "@/types/api"
 
 interface OrderSummaryProps {
   items: CartItem[]
   summary: CartSummary
   shippingMethod: string
-  isSubmitting: boolean
+  formData: { firstName: string, lastName: string, email: string, address: string, city: string, state: string, zipCode: string, country: string }
+  paymentMethod: string
+  errors: Record<string, string>
+  setErrors: (errors: Record<string, string>) => void
+  touched: Record<string, boolean>
+  setAllTouched: () => void
 }
 
-export function OrderSummary({ items, summary, shippingMethod, isSubmitting }: OrderSummaryProps) {
+export function OrderSummary({ items, summary, shippingMethod, formData, paymentMethod, setErrors, setAllTouched }: OrderSummaryProps) {
+  const { loggedUser: user } = useUser()
+  const { clearCart } = useCart()
   const shippingCost = shippingMethod === "express" ? summary.shipping + 10 : summary.shipping
   const totalCost = shippingMethod === "express" ? summary.total + 10 : summary.total
+
+  const { mutate: placeOrder, isPending } = usePlaceOrder({
+    onSuccess: () => {
+      // Clear the cart after successful order placement
+      clearCart()
+    },
+  })
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {}
+
+    // Validate customer information
+    if (!formData.firstName.trim()) {
+      newErrors.firstName = "First name is required"
+    } else if (formData.firstName.length < 2) {
+      newErrors.firstName = "First name must be at least 2 characters"
+    }
+
+    if (!formData.lastName.trim()) {
+      newErrors.lastName = "Last name is required"
+    } else if (formData.lastName.length < 2) {
+      newErrors.lastName = "Last name must be at least 2 characters"
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required"
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Email is invalid"
+    }
+
+    // Validate shipping address
+    if (!formData.address.trim()) {
+      newErrors.address = "Street address is required"
+    } else if (formData.address.length < 5) {
+      newErrors.address = "Please enter a valid street address"
+    }
+
+    if (!formData.city.trim()) {
+      newErrors.city = "City is required"
+    }
+
+    if (!formData.state.trim()) {
+      newErrors.state = "State/Province is required"
+    }
+
+    if (!formData.zipCode.trim()) {
+      newErrors.zipCode = "ZIP/Postal code is required"
+    }
+
+    if (!formData.country.trim()) {
+      newErrors.country = "Country is required"
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
+  const handlePlaceOrder = () => {
+    if (!user?._id) {
+      toast.error("You must be logged in to place an order")
+      return
+    }
+
+    // Mark all fields as touched to show all validation errors
+    setAllTouched()
+
+    // Validate the form
+    const isValid = validateForm()
+
+    if (!isValid) {
+      toast.error("Please fix the errors in the form")
+      return
+    }
+
+    // Validate cart items
+    if (items.length === 0) {
+      toast.error("Your cart is empty")
+      return
+    }
+
+    // Convert cart items to order items format
+    const orderItems = items.map((item) => ({ name: item.name, image: item.image || "https://placeholder.com/product.jpg", price: item.price, quantity: item.quantity, productId: item.productId }))
+
+    // Create full name from first and last name
+    const fullName = `${formData.firstName} ${formData.lastName}`.trim()
+
+    // Create order payload
+    const orderPayload: OrderPayload = {
+      orderItems,
+      shippingAddress: { fullName, street: formData.address, city: formData.city, region: formData.state, postalCode: formData.zipCode, country: formData.country },
+      userId: user._id,
+      paymentMethod: paymentMethod || "Credit Card",
+      itemsPrice: summary.subtotal,
+      shippingPrice: shippingCost,
+      taxPrice: summary.tax,
+      totalPrice: totalCost,
+      isPaid: false,
+      isDelivered: false,
+      status: "pending",
+    }
+
+    placeOrder(orderPayload)
+  }
 
   return (
     <Card className="sticky top-6">
@@ -55,8 +171,8 @@ export function OrderSummary({ items, summary, shippingMethod, isSubmitting }: O
         </div>
       </CardContent>
       <CardFooter>
-        <Button type="submit" className="w-full" size="lg" disabled={isSubmitting}>
-          {isSubmitting ? (
+        <Button onClick={handlePlaceOrder} className="w-full" size="lg" disabled={isPending || !user?._id}>
+          {isPending ? (
             <>
               <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
               Processing...
