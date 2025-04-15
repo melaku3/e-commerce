@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { IOrder } from "../../utils/types";
 
 const orderSchema = new mongoose.Schema({
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: "user", required: true },
+    userId: { type: String, ref: "user", required: true },
     orderItems: [{ type: mongoose.Schema.Types.ObjectId, ref: "orderItem", required: true }],
     shippingAddress: { type: mongoose.Schema.Types.ObjectId, ref: "shippingAddress", required: true },
     paymentMethod: { type: String, required: true },

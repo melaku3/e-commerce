@@ -61,7 +61,7 @@ export const orderSchema = z.object({
         postalCode: z.string().min(3, { message: "Postal code must be at least 3 characters long." }).max(255, { message: "Postal code must not exceed 255 characters." }),
         country: z.string().min(3, { message: "Country must be at least 3 characters long." }).max(255, { message: "Country must not exceed 255 characters." })
     }),
-    userId: z.string().length(24, { message: "User ID must be exactly 24 characters long." }),
+    userId: z.string(),
     paymentMethod: z.string().min(3, { message: "Payment method must be at least 3 characters long." }).max(255, { message: "Payment method must not exceed 255 characters." }),
     itemsPrice: z.number().min(0, { message: "Items price must be a positive number." }),
     shippingPrice: z.number().min(0, { message: "Shipping price must be a positive number." }),

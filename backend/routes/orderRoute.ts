@@ -1,9 +1,15 @@
 import express from 'express';
-import { createOrder } from '../controllers/orderController';
+import { createOrder, getOrders, getOrder } from '../controllers/orderController';
+import { requireAuth } from '../middlewares/requireAuth';
 
 const orderRouter = express.Router();
 
 orderRouter.route('/')
-    .post(createOrder)
+    .get(requireAuth, getOrders)
+    .post(requireAuth, createOrder)
+
+orderRouter.route('/:id')
+    .get(requireAuth, getOrder)
+
 
 export default orderRouter;
