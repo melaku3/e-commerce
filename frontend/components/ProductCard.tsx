@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader } from "@/components/ui/card"
 import ColorSwatch from "./ColorSwatch"
 import ProductDetailDrawer from "./ProductDetailDrawer"
+import { useCart } from "@/hooks/useCart"
 import type { Product } from "@/types/api"
 
 interface ProductCardProps extends Product {
@@ -24,28 +25,55 @@ export default function ProductCard(props: ProductCardProps) {
     const [favorite, setFavorite] = useState(isFavorite)
     const [isHovered, setIsHovered] = useState(false)
     const [showDetails, setShowDetails] = useState(false)
+    const { addToCart } = useCart()
 
     const toggleFavorite = useCallback((e: React.MouseEvent) => {
         e.stopPropagation()
         setFavorite((prev) => !prev)
     }, [])
 
-    const handleCardClick = useCallback(() => { setShowDetails(true) }, [])
+    const handleCardClick = useCallback(() => {
+        setShowDetails(true)
+    }, [])
 
-    const handleMouseEnter = useCallback(() => { setIsHovered(true) }, [])
+    const handleMouseEnter = useCallback(() => {
+        setIsHovered(true)
+    }, [])
 
-    const handleMouseLeave = useCallback(() => { setIsHovered(false) }, [])
+    const handleMouseLeave = useCallback(() => {
+        setIsHovered(false)
+    }, [])
+
+    const handleAddToCart = useCallback(
+        (e: React.MouseEvent) => {
+            e.stopPropagation() // Prevent opening the drawer
+
+            // If there are color/size options, open the drawer instead
+            if ((color && color.length > 0) || (size && size.length > 0)) {
+                setShowDetails(true)
+                return
+            }
+
+            // Otherwise add directly with default options
+            addToCart(props, { quantity: 1, color: null, size: null })
+        },
+        [props, addToCart, color, size]
+    )
 
     const StarRating = useMemo(
         () => (
             <div className="flex items-center mt-1">
-                {Array(5).fill(0).map((_, i) => (<Star key={i} className={cn("h-4 w-4", i < rating ? "fill-primary text-primary" : "text-muted-foreground")} aria-hidden="true" />))}
+                {Array(5)
+                    .fill(0)
+                    .map((_, i) => (
+                        <Star key={i} className={cn("h-4 w-4", i < rating ? "fill-primary text-primary" : "text-muted-foreground")} aria-hidden="true" />
+                    ))}
                 <span className="text-xs text-muted-foreground ml-1" aria-label={`Rated ${rating.toFixed(1)} out of 5 stars`}>
                     ({rating.toFixed(1)})
                 </span>
             </div>
         ),
-        [rating]
+        [rating],
     )
 
     const HoverDetails = useMemo(() => {
@@ -65,8 +93,7 @@ export default function ProductCard(props: ProductCardProps) {
     const isInStock = countInStock > 0
 
     return (
-        <Card
-            className={cn("overflow-hidden transition-all duration-300 h-full cursor-pointer", isHovered && "transform scale-[1.02] shadow-lg")} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} onClick={handleCardClick} tabIndex={0} onKeyDown={(e) => e.key === "Enter" && handleCardClick()} role="button" aria-label={`View details for ${name}`}>
+        <Card className={cn("overflow-hidden transition-all duration-300 h-full cursor-pointer", isHovered && "transform scale-[1.02] shadow-lg",)} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} onClick={handleCardClick} tabIndex={0} onKeyDown={(e) => e.key === "Enter" && handleCardClick()} role="button" aria-label={`View details for ${name}`}>
             <div className="relative">
                 <div className="aspect-[4/3] relative overflow-hidden m-0 p-0">
                     <Image src={imageUrl} alt={`Product image of ${name}`} fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" className="object-cover transition-transform duration-300 hover:scale-105" priority={false} />
@@ -109,14 +136,13 @@ export default function ProductCard(props: ProductCardProps) {
             </CardContent>
 
             <CardFooter className="p-4 pt-0">
-                <Button className="w-full gap-2 transition-all hover:gap-3" disabled={!isInStock} aria-label={isInStock ? "Add to Cart" : "Out of Stock"}                >
+                <Button className="w-full gap-2 transition-all hover:gap-3" disabled={!isInStock} aria-label={isInStock ? "Add to Cart" : "Out of Stock"} onClick={handleAddToCart}>
                     <ShoppingCart className="h-4 w-4" />
                     <span>{isInStock ? "Add to Cart" : "Out of Stock"}</span>
                 </Button>
             </CardFooter>
 
-            <ProductDetailDrawer product={props} open={showDetails} onOpenChange={setShowDetails} />
+            <ProductDetailDrawer product={props} open={showDetails} onOpenChange={setShowDetails} onAddToCart={(product, options) => addToCart(product, options)} />
         </Card>
     )
 }
-

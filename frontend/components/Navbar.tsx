@@ -52,7 +52,7 @@ const Navbar = () => {
                 {/* Right Side Actions */}
                 <div className="flex items-center gap-2 sm:gap-4">
                     <ThemeToggle />
-                    {isSignedIn && <CartButton />}
+                    <CartButton />
 
                     {isSignedIn ? (
                         <UserButton>

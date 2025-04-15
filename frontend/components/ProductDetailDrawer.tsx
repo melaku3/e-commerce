@@ -13,6 +13,7 @@ import ProductDescription from "@/components/product/ProductDescription"
 import ProductAvailability from "@/components/product/ProductAvailability"
 import ProductReviews from "@/components/product/ProductReviews"
 import { RoleGate } from "@/components/auth/RoleGate"
+import { useCart } from "@/hooks/useCart"
 import type { Product } from "@/types/api"
 import type { ProductOptions as ProductOptionsType } from "@/types/product"
 
@@ -24,6 +25,8 @@ interface ProductDetailDrawerProps {
 }
 
 export default function ProductDetailDrawer({ product, open, onOpenChange, onAddToCart }: ProductDetailDrawerProps) {
+  const { addToCart } = useCart()
+
   const [selectedOptions, setSelectedOptions] = useState<ProductOptionsType>({
     color: product.color && Array.isArray(product.color) && product.color.length > 0 ? product.color[0] : null,
     size: product.size && Array.isArray(product.size) && product.size.length > 0 ? product.size[0] : null,
@@ -38,15 +41,13 @@ export default function ProductDetailDrawer({ product, open, onOpenChange, onAdd
     if (onAddToCart) {
       onAddToCart(product, selectedOptions)
     } else {
-      // Default implementation if no onAddToCart provided
-      toast.success("Added to cart", {
-        description: `${product.name} (${selectedOptions.quantity}) added to your cart`,
-      })
+      // Use our cart context
+      addToCart(product, selectedOptions)
     }
 
     // Close the drawer after adding to cart
     onOpenChange(false)
-  }, [product, selectedOptions, onAddToCart, onOpenChange])
+  }, [product, selectedOptions, onAddToCart, addToCart, onOpenChange])
 
   const handleReviewAdded = useCallback(() => {
     toast.success("Review submitted", { description: "Thank you for your feedback!" })
@@ -83,7 +84,7 @@ export default function ProductDetailDrawer({ product, open, onOpenChange, onAdd
             {/* Separator */}
             <Separator className="my-8" />
 
-            {/* Product Reviews - Now passing the actual reviews array */}
+            {/* Product Reviews */}
             <ProductReviews productId={product._id} onReviewAdded={handleReviewAdded} />
 
             {/* Admin-only section */}

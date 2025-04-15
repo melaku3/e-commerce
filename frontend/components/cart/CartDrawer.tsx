@@ -6,8 +6,6 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import { useCart } from "@/hooks/useCart"
 import Image from "next/image"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
 
 interface CartDrawerProps {
   open: boolean
@@ -15,12 +13,10 @@ interface CartDrawerProps {
 }
 
 export default function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
-  const router = useRouter()
   const { items, summary, updateQuantity, removeFromCart, isLoading } = useCart()
 
   const handleCheckout = () => {
     onOpenChange(false)
-    router.push("/checkout")
   }
 
   if (isLoading) {
@@ -71,18 +67,12 @@ export default function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
                     </div>
                     <div className="flex flex-1 flex-col">
                       <div className="flex justify-between text-base font-medium">
-                        <Link href={`/products/${item.productId}`} className="hover:underline">
-                          <h3>{item.name}</h3>
-                        </Link>
+                        <h3>{item.name}</h3>
                         <p className="ml-4">${(item.price * item.quantity).toFixed(2)}</p>
                       </div>
                       <div className="flex items-center mt-2">
                         {item.color && (
-                          <div
-                            className="h-4 w-4 rounded-full border"
-                            style={{ backgroundColor: item.color }}
-                            aria-label={`Color: ${item.color}`}
-                          />
+                          <div className="h-4 w-4 rounded-full border" style={{ backgroundColor: item.color }} aria-label={`Color: ${item.color}`} />
                         )}
                         {item.size && <span className="ml-2 text-sm text-muted-foreground">Size: {item.size}</span>}
                       </div>
@@ -142,4 +132,3 @@ export default function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
     </Drawer>
   )
 }
-
