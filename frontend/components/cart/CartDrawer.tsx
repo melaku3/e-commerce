@@ -6,6 +6,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import { useCart } from "@/hooks/useCart"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 
 interface CartDrawerProps {
   open: boolean
@@ -14,8 +15,10 @@ interface CartDrawerProps {
 
 export default function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
   const { items, summary, updateQuantity, removeFromCart, isLoading } = useCart()
+  const router = useRouter()
 
   const handleCheckout = () => {
+    router.push("/checkout")
     onOpenChange(false)
   }
 

@@ -77,5 +77,5 @@ export function useUser() {
         } else { setLoggedUser(null), setIsRegistered(false), setIsLoading(false) }
     }, [isSignedIn, isRegistered, registerUser, fetchUserData])
 
-    return { loggedUser, isSignedIn: !!isSignedIn, refreshUserData: fetchUserData, isLoading, isAdmin: loggedUser?.role === "admin", isRegistered }
+    return { user, loggedUser, isSignedIn: !!isSignedIn, refreshUserData: fetchUserData, isLoading, isAdmin: loggedUser?.role === "admin", isRegistered }
 }
