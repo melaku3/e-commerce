@@ -1,13 +1,20 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { CheckCircle2, Home, ShoppingBag } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 
 export default function CheckoutSuccessPage() {
+  const [orderNumber, setOrderNumber] = useState<string>("")
+
+  useEffect(() => {
+    setOrderNumber(`ORD-${Math.floor(100000 + Math.random() * 900000)}`)
+  }, [])
+
   return (
-    <div className="container mx-auto  max-w-md py-16">
+    <div className="container max-w-md py-16 mx-auto">
       <Card className="text-center">
         <CardHeader>
           <div className="flex justify-center mb-2">
@@ -17,11 +24,10 @@ export default function CheckoutSuccessPage() {
           <CardDescription>Thank you for your purchase</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p>We&apos;ve sent a confirmation email with your order details and tracking information.</p>
+          <p>We've sent a confirmation email with your order details and tracking information.</p>
           <div className="rounded-lg bg-muted p-4">
             <p className="text-sm text-muted-foreground">
-              Order #:{" "}
-              <span className="font-medium text-foreground">ORD-{Math.floor(100000 + Math.random() * 900000)}</span>
+              Order #: <span className="font-medium text-foreground">{orderNumber || "Processing..."}</span>
             </p>
           </div>
         </CardContent>
@@ -33,7 +39,7 @@ export default function CheckoutSuccessPage() {
             </Link>
           </Button>
           <Button variant="outline" asChild className="w-full">
-            <Link href="/my-orders">
+            <Link href="/account/orders">
               <ShoppingBag className="mr-2 h-4 w-4" />
               View My Orders
             </Link>
