@@ -1,5 +1,5 @@
 import express from 'express';
-import { createOrder, getOrders, getOrder } from '../controllers/orderController';
+import { cancelOrder, createOrder, getOrders, getOrder } from '../controllers/orderController';
 import { requireAuth } from '../middlewares/requireAuth';
 
 const orderRouter = express.Router();
@@ -11,5 +11,6 @@ orderRouter.route('/')
 orderRouter.route('/:id')
     .get(requireAuth, getOrder)
 
+orderRouter.patch('/:id/cancel', requireAuth, cancelOrder)
 
 export default orderRouter;

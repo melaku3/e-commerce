@@ -18,10 +18,6 @@ export const getOrders = expressAsyncHandler(async (req, res) => {
     }
 
     const orders = await orderModel.find({ userId }).populate('orderItems').populate('shippingAddress').sort({ createdAt: -1 });
-    if (!orders || orders.length === 0) {
-        res.status(404).json({ message: "No orders found" });
-        return;
-    }
     res.status(200).json(orders);
 })
 
@@ -117,8 +113,37 @@ export const createOrder = expressAsyncHandler(async (req, res) => {
 
     const order = await orderModel.create(validate.data)
 
-    res.status(201).json({ message: "Order created successfully", order: order._id, shippingAddress: shippingAddress._id, orderItems: orderItems });
+    res.status(201).json({ message: "Order created successfully", _id: order._id, shippingAddress: shippingAddress._id, orderItems: orderItems });
 })
 
 
+// @desc   Update order to cancelled
+// @route  PATCH /api/v1/orders/:id/cancel
+// @access Private
+export const cancelOrder = expressAsyncHandler(async (req, res) => {
+    const { userId } = req;
+    const { id } = req.params;
 
+    if (!userId) {
+        res.status(401).json({ message: "Unauthorized" });
+        return;
+    }
+    
+    const order = await orderModel.findById(id);
+    if (!order) {
+        res.status(404).json({ message: "Order not found" });
+        return;
+    }
+
+    // check if order is already cancelled
+    if (order.isCancelled) {
+        res.status(400).json({ message: "Order is already cancelled" });
+        return;
+    }
+
+    // update order to cancelled
+    order.status = 'cancelled';
+    await order.save();
+
+    res.status(200).json(order);
+})

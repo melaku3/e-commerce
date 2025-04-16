@@ -219,7 +219,6 @@ export type OrderStatus = "pending" | "shipped" | "delivered" | "cancelled"
 export interface OrderPayload {
   orderItems: OrderItem[]
   shippingAddress: ShippingAddress
-  userId: string
   paymentMethod: string
   itemsPrice: number
   shippingPrice: number

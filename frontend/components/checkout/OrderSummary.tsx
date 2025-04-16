@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { CheckoutItemCard } from "./CheckoutItemCard"
-import { usePlaceOrder } from "@/hooks/usePlaceOrder"
+import { useOrder } from "@/hooks/useOrder"
 import { useUser } from "@/hooks/useUser"
 import { useCart } from "@/hooks/useCart"
 import { toast } from "sonner"
@@ -29,12 +29,8 @@ export function OrderSummary({ items, summary, shippingMethod, formData, payment
   const shippingCost = shippingMethod === "express" ? summary.shipping + 10 : summary.shipping
   const totalCost = shippingMethod === "express" ? summary.total + 10 : summary.total
 
-  const { mutate: placeOrder, isPending } = usePlaceOrder({
-    onSuccess: () => {
-      // Clear the cart after successful order placement
-      clearCart()
-    },
-  })
+  // Use the consolidated useOrder hook
+  const { placeOrder, isPlacingOrder } = useOrder()
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {}
@@ -109,7 +105,13 @@ export function OrderSummary({ items, summary, shippingMethod, formData, payment
     }
 
     // Convert cart items to order items format
-    const orderItems = items.map((item) => ({ name: item.name, image: item.image || "https://placeholder.com/product.jpg", price: item.price, quantity: item.quantity, productId: item.productId }))
+    const orderItems = items.map((item) => ({
+      name: item.name,
+      image: item.image || "https://placeholder.com/product.jpg",
+      price: item.price,
+      quantity: item.quantity,
+      productId: item.productId,
+    }))
 
     // Create full name from first and last name
     const fullName = `${formData.firstName} ${formData.lastName}`.trim()
@@ -118,7 +120,6 @@ export function OrderSummary({ items, summary, shippingMethod, formData, payment
     const orderPayload: OrderPayload = {
       orderItems,
       shippingAddress: { fullName, street: formData.address, city: formData.city, region: formData.state, postalCode: formData.zipCode, country: formData.country },
-      userId: user._id,
       paymentMethod: paymentMethod || "Credit Card",
       itemsPrice: summary.subtotal,
       shippingPrice: shippingCost,
@@ -129,7 +130,9 @@ export function OrderSummary({ items, summary, shippingMethod, formData, payment
       status: "pending",
     }
 
-    placeOrder(orderPayload)
+    placeOrder(orderPayload, {
+      onSuccess: () => clearCart()
+    })
   }
 
   return (
@@ -171,8 +174,8 @@ export function OrderSummary({ items, summary, shippingMethod, formData, payment
         </div>
       </CardContent>
       <CardFooter>
-        <Button onClick={handlePlaceOrder} className="w-full" size="lg" disabled={isPending || !user?._id}>
-          {isPending ? (
+        <Button onClick={handlePlaceOrder} className="w-full" size="lg" disabled={isPlacingOrder || !user?._id}>
+          {isPlacingOrder ? (
             <>
               <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
               Processing...

@@ -2,11 +2,12 @@
 
 import type React from "react"
 
-import Link from "next/link"
 import { User } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useClerk } from "@clerk/nextjs"
+import { Button } from "../ui/button"
 
 interface CustomerInformationFormProps {
   formData: { firstName: string, lastName: string, email: string }
@@ -18,6 +19,7 @@ interface CustomerInformationFormProps {
 }
 
 export function CustomerInformationForm({ formData, handleInputChange, isSignedIn, errors, touched, setTouched }: CustomerInformationFormProps) {
+  const { openSignIn } = useClerk()
   const handleBlur = (field: string) => {
     if (setTouched) {
       setTouched(field)
@@ -34,9 +36,7 @@ export function CustomerInformationForm({ formData, handleInputChange, isSignedI
         {!isSignedIn && (
           <CardDescription>
             Already have an account?{" "}
-            <Link href="/sign-in" className="text-primary underline">
-              Sign in
-            </Link>
+            <Button variant="link" className="p-0 h-auto text-primary underline cursor-pointer" onClick={() => openSignIn({ redirectUrl: '/checkout' })}>Sign In</Button>
           </CardDescription>
         )}
       </CardHeader>
