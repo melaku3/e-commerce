@@ -8,6 +8,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { FaLongArrowAltRight, FaPause, FaPlay } from "react-icons/fa"
 import { cn } from "@/lib/utils"
+import ProductDetailDrawer from "@/components/ProductDetailDrawer"
 import type { Product } from "@/types/api"
 
 interface AutoSlideCarouselProps {
@@ -18,6 +19,8 @@ interface AutoSlideCarouselProps {
 export default function AutoSlideCarousel({ products, count = 5 }: AutoSlideCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
+  const [showDrawer, setShowDrawer] = useState(false)
 
   const slides = useMemo(() => {
     if (!products || products.length === 0) return []
@@ -36,7 +39,6 @@ export default function AutoSlideCarousel({ products, count = 5 }: AutoSlideCaro
 
   const totalSlides = useMemo(() => slides?.length || 0, [slides])
 
-  // Handle automatic sliding
   useEffect(() => {
     if (isPaused || totalSlides === 0) return
 
@@ -47,12 +49,10 @@ export default function AutoSlideCarousel({ products, count = 5 }: AutoSlideCaro
     return () => clearInterval(interval)
   }, [isPaused, totalSlides])
 
-  // Navigate to a specific slide
   const goToSlide = useCallback((index: number): void => {
     setCurrentIndex(index)
   }, [])
 
-  // Handle keyboard navigation
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent): void => {
       if (e.key === "ArrowLeft") {
@@ -62,19 +62,21 @@ export default function AutoSlideCarousel({ products, count = 5 }: AutoSlideCaro
       } else if (e.key === "Space") {
         setIsPaused((prev) => !prev)
       }
-    }, [totalSlides])
+    },
+    [totalSlides]
+  )
 
   const togglePause = useCallback(() => {
     setIsPaused((prev) => !prev)
   }, [])
 
-
   const carouselStyle = useMemo(
     () => ({
       transform: `translateX(-${currentIndex * 100}%)`,
       transition: "transform 0.7s ease-in-out",
-    }), [currentIndex])
-
+    }),
+    [currentIndex]
+  )
 
   if (totalSlides === 0) {
     return <div className="w-full h-64 bg-muted flex items-center justify-center rounded-lg">No products available</div>
@@ -95,15 +97,25 @@ export default function AutoSlideCarousel({ products, count = 5 }: AutoSlideCaro
                   <p className="text-sm text-muted-foreground mb-4 line-clamp-3">{slide.description}</p>
                   <p className="text-xl font-bold mb-4">${slide.price.toFixed(2)}</p>
                   <div className="flex flex-col sm:flex-row items-center gap-4 mt-6">
-                    <Link href={slide.link} className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg px-6 py-3 font-medium transition-colors" aria-label={`Shop now for ${slide.text}`}                    >
+                    <button
+                      onClick={() => {
+                        const product = products.find(p => p._id === slide.id)
+                        if (product) {
+                          setSelectedProduct(product)
+                          setShowDrawer(true)
+                        }
+                      }}
+                      className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg px-6 py-3 font-medium transition-colors" aria-label={`Open details for ${slide.text}`}>
                       Shop Now
-                    </Link>
+                    </button>
+
                     <Link href="/all-products" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors" aria-label="Explore more products">
                       Explore More
                       <FaLongArrowAltRight aria-hidden="true" />
                     </Link>
                   </div>
                 </div>
+
                 <div className="relative w-full md:w-1/2 aspect-square md:aspect-auto max-w-md" style={{ height: "300px" }}>
                   <Image src={slide.image} alt={`Product: ${slide.text}`} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-contain rounded-lg" priority={index === 0} />
                 </div>
@@ -113,14 +125,16 @@ export default function AutoSlideCarousel({ products, count = 5 }: AutoSlideCaro
         </CarouselContent>
       </Carousel>
 
-      {/* Controls */}
+      {selectedProduct && (
+        <ProductDetailDrawer product={selectedProduct} open={showDrawer} onOpenChange={setShowDrawer} />
+      )}
+
       <div className="absolute bottom-4 right-4 z-10">
         <button onClick={togglePause} className="bg-white/80 hover:bg-white text-primary p-2 rounded-full transition-colors" aria-label={isPaused ? "Play slideshow" : "Pause slideshow"}>
           {isPaused ? <FaPlay size={14} /> : <FaPause size={14} />}
         </button>
       </div>
 
-      {/* Slide Indicators */}
       <div className="flex justify-center gap-2 mt-4" role="tablist" aria-label="Carousel navigation">
         {slides.map((slide, index) => (
           <button key={slide.id || index} onClick={() => goToSlide(index)} className={cn("w-3 h-3 rounded-full transition-all", index === currentIndex ? "bg-primary scale-125" : "bg-muted-foreground/30 hover:bg-muted-foreground/50")} aria-label={`Go to slide ${index + 1}`} aria-selected={index === currentIndex} role="tab" tabIndex={index === currentIndex ? 0 : -1} />
@@ -129,4 +143,3 @@ export default function AutoSlideCarousel({ products, count = 5 }: AutoSlideCaro
     </div>
   )
 }
-
