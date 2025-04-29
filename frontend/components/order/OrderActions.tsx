@@ -1,12 +1,13 @@
 "use client"
 
 import { useState } from "react"
-import { Loader2 } from "lucide-react"
+import { Loader2 } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog"
 import { useOrder } from "@/hooks/useOrder"
 import { useCart } from "@/hooks/useCart"
 import type { OrderResponse } from "@/hooks/useOrder"
+import type { Product, Category } from "@/types/api"
 
 interface OrderActionsProps {
   order: OrderResponse
@@ -27,7 +28,12 @@ export function OrderActions({ order }: OrderActionsProps) {
 
   const handleBuyAgain = () => {
     order.orderItems.forEach((item) => {
-      addToCart({ _id: item.productId, name: item.name, price: item.price, images: [item.image], countInStock: 99 } as any, { quantity: item.quantity })
+      // Create a default category object
+      const defaultCategory: Category = { _id: "", name: "Default", description: "Default category" }
+
+      // Create a complete product object with all required fields
+      const product: Product = { _id: item.productId, name: item.name, slug: item.name.toLowerCase().replace(/\s+/g, "-"), description: "", price: item.price, category: defaultCategory, images: [item.image], countInStock: 99, rating: 0, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }
+      addToCart(product, { quantity: item.quantity })
     })
   }
 
