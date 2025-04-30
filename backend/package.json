@@ -4,7 +4,7 @@
   "description": "backend for e-commerce website",
   "main": "server.ts",
   "scripts": {
-    "start": "node --max-old-space-size=1024 node_modules/.bin/nodemon server.ts"
+    "start": "nodemon server.ts"
   },
   "keywords": [],
   "author": "",
