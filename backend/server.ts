@@ -13,4 +13,3 @@ const PORT = process.env.PORT || 3500;
 
 // Start the server
 mongoose.connection.once("open", () => app.listen(PORT, () => console.log(`Server is running on port ${PORT}`)));
-    
