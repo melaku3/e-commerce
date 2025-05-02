@@ -6,7 +6,7 @@ import { ProductFilters } from "./components/ProductFilters";
 import { ProductSort } from "./components/ProductSort";
 import { ProductsHeader } from "./components/ProductsHeader";
 import { Pagination } from "./components/Pagination";
-import useProductFilters from "../../hooks/useProductFilters";
+import useProductFilters from "../../../hooks/useProductFilters";
 import { filterProducts, sortProducts } from "./utils/productUtils";
 import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
