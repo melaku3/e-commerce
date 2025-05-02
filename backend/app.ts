@@ -3,10 +3,6 @@ import errorHandler from './middlewares/errorHandler';
 import morgan from 'morgan';
 import cors from 'cors';
 import { clerkMiddleware } from '@clerk/express';
-import dotenv from 'dotenv';
-
-// load environment variables
-dotenv.config();
 
 // routes
 import userRouter from './routes/userRoute';
