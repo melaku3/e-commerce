@@ -4,9 +4,7 @@ import RecentOrdersTable from "@/components/admin/RecentOrdersTable"
 import TopProductsList from "@/components/admin/TopProductsList"
 
 export default function AdminDashboard() {
-  const isAdmin = false
   return (
-    {isAdmin &&
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
@@ -30,6 +28,6 @@ export default function AdminDashboard() {
           <TopProductsList />
         </div>
       </div>
-    </div> : <></>}
+    </div>
   )
 }
